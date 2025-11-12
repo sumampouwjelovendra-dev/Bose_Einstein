@@ -168,6 +168,33 @@ fig3d.update_layout(
 )
 
 st.plotly_chart(fig3d, use_container_width=True)
+# ======================================================
+# Tambahan: Jalur Puncak Wien di Permukaan 3D
+# ======================================================
+
+# Hukum Pergeseran Wien: lambda_max = 2.898e-3 / T (meter)
+lambda_max_m = 2.898e-3 / T_t
+lambda_max_nm = lambda_max_m * 1e9
+
+# Ambil intensitas di sekitar lambda_max untuk plot
+I_peak = []
+for i, T in enumerate(T_t):
+    idx = np.abs(wl_nm - lambda_max_nm[i]).argmin()
+    I_peak.append(I_time[i, idx])
+
+# Tambahkan garis puncak ke grafik 3D
+fig3d.add_trace(go.Scatter3d(
+    x=lambda_max_nm,
+    y=T_t,
+    z=I_peak,
+    mode='lines+markers',
+    line=dict(color='cyan', width=5),
+    marker=dict(size=4, color='white'),
+    name='Puncak λₘₐₓ (Hukum Wien)'
+))
+
+fig3d.update_layout(title="Distribusi Bose–Einstein dan Jalur Pergeseran Wien")
+st.plotly_chart(fig3d, use_container_width=True)
 
 st.markdown("""
 ---
